@@ -12,8 +12,8 @@ def add_parser(subparsers):
 
     # Subparser for setting proxy settings
     set_parser = subparsers.add_parser("set", help="Set proxy settings. Syntax: proxy set <IP> <PORT>")
-    set_parser.add_argument("-p", "--port", default="8080", help="Port to set the proxy server")
-    set_parser.add_argument("-i", "--ip", required=True, help="IP address to set the proxy server")
+    set_parser.add_argument("-P", "--port", default="8080", help="Port to set the proxy server")
+    set_parser.add_argument("-H", "--host", required=True, help="IP address to set the proxy server")
     set_parser.set_defaults(func=set_proxy)
     # Subparser for unsetting proxy settings
     unset_parser = subparsers.add_parser("unset", help="Unset proxy settings")
@@ -26,10 +26,10 @@ def get_proxy(args):
 @header
 def set_proxy(args):
     """Set the proxy server."""
-    if not args.ip:
+    if not args.host:
         print(f"{ANSI.YELLOW}[!]{ANSI.RESET}Please provide an IP address.")
         return
-    proxy_settings = f"{args.ip}:{args.port}"
+    proxy_settings = f"{args.host}:{args.port}"
     run_adb_command(f"shell settings put global http_proxy {proxy_settings}")
 
 @header

@@ -16,7 +16,7 @@ BANNER = f"""
   ░      ░ ░ ░ ▒   ░   ▒     ░   ░ ░       ░   ░ ░ ░ ░   ░  ░░░ ░ ░ ▒ ▒ ░░     ░     ░   ░ ░ 
              ░ ░       ░  ░        ░             ░       ░    ░     ░ ░        ░  ░        ░ 
                                                                     ░ ░                      
-            Welcom to my hacking tool - v.1.0 - @Copyright by {ANSI.RED}Toan Nguyen{ANSI.RESET}{ANSI.CYAN}
+            Welcome to my hacking tool - v.1.0 - @Copyright by {ANSI.RED}Toan Nguyen{ANSI.RESET}{ANSI.CYAN}
     ==================================================================================
 {ANSI.RESET}\n\n"""
 def main():
