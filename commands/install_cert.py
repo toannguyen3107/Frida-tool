@@ -4,6 +4,7 @@ from utils.color_utils import ANSI
 from utils.decorator import header
 import subprocess
 import os
+import shutil
 import requests
 
 def add_parser(subparsers):
@@ -77,7 +78,7 @@ def install_certificate(args):
     if check_openssl_installed:
         if not os.path.isfile(f'{install_cert_folder}/9a5ba575.0'):
             if not os.path.isfile(f'{install_cert_folder}/cim-cacert.pem'):
-                run_command(f"openssl x509 -inform DER -in toancert.der -out {install_cert_folder}/cim-cacert.pem")
+                run_command(f"openssl x509 -inform DER -in {install_cert_folder}/toancert.der -out {install_cert_folder}/cim-cacert.pem")
                 run_command(f"openssl x509 -inform PEM -subject_hash_old -in {install_cert_folder}/cim-cacert.pem")
                 run_command(f"powershell -c mv {install_cert_folder}/cim-cacert.pem {install_cert_folder}/9a5ba575.0")
             else: 
@@ -94,3 +95,11 @@ def install_certificate(args):
             print(f"{ANSI.GREEN}Certificate installed successfully!{ANSI.RESET}")
         else: 
             print(f"{ANSI.YELLOW}Reboot and check!{ANSI.RESET}")
+        
+        # Check if install_cert folder exists, delete it
+        if os.path.exists(install_cert_folder):
+            try:
+                shutil.rmtree(install_cert_folder)
+                print(f"{ANSI.GREEN}Deleted '{install_cert_folder}' folder{ANSI.RESET}")
+            except OSError as e:
+                print(f"{ANSI.RED}Error deleting '{install_cert_folder}' folder: {e}{ANSI.RESET}")

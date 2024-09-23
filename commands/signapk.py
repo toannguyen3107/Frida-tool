@@ -2,6 +2,7 @@ import os
 from utils.color_utils import ANSI
 from utils.run_command import run_command
 from utils.decorator import header
+
 def add_parser(subparsers):
     parser = subparsers.add_parser('signapk', help='Sign an APK file')
     parser.set_defaults(func=signapk)

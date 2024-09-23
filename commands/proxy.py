@@ -23,6 +23,7 @@ def add_parser(subparsers):
 def get_proxy(args):
     """Retrieve current proxy settings."""
     run_adb_command("shell settings get global http_proxy")
+
 @header
 def set_proxy(args):
     """Set the proxy server."""
