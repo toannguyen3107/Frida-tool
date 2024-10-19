@@ -5,7 +5,7 @@ from utils.decorator import header
 from utils.parser_request_utils import parser_file, gen_proj
 def add_parser(subparsers):
     parser = subparsers.add_parser("prr", help="parser requests")
-    parser.add_argument('-l', "--request-directory", required=True, help="Path to the request directory")
+    parser.add_argument('-in', "--request_directory", required=True, help="Path to the request directory")
     parser.add_argument('-o', '--output', help="Output directory")
     parser.set_defaults(func=parser_request)
     
