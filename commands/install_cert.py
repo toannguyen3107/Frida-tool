@@ -8,7 +8,7 @@ import shutil
 import requests
 
 def add_parser(subparsers):
-    parser = subparsers.add_parser("install_cert", help=f"Install a certificate, default path is {ANSI.YELLOW}toancert.der{ANSI.RESET}")
+    parser = subparsers.add_parser("install_cert", help=f"Install a certificate with {ANSI.CYAN}ip{ANSI.RESET} and {ANSI.CYAN}port{ANSI.RESET}.")
     parser.add_argument("-p", "--path", default="toancert.der", help="Path to the certificate file")
     parser.set_defaults(func=install_certificate)
     parser.add_argument("-H", "--host", type=str, help="Host address for certificate download")
