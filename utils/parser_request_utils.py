@@ -63,7 +63,57 @@ def parser_file(file_path):
     }
     
     return key, request_json
-    
+def gen_program(name_proj, input_json):
+    """generate the program request"""
+    flow_request_body = ""
+    try:
+            
+        with open(input_json, 'r') as file_json:
+            config = json.load(file_json)
+        print(config)
+        collection = {}
+        max_idx = 0
+
+        for key, _ in config.items():
+            idx = int(key.split('_')[0])
+            collection[idx] = {
+                'name': key
+            }
+            max_idx = max(max_idx, idx)
+        def gen_flow_request_body(idx, name):
+            return f"""
+    \"\"\" {'=' * 10 } {idx} - {name}  {'=' * 10 }\"\"\"
+    req = collection[{idx}]['req']
+    # define header
+    pass
+    # define body
+    pass
+    # send request data or json
+    response = req.senddata()
+
+    print_color(collection[{idx}]['name'], response.json())
+
+    # extract response
+    pass
+    \"\"\" {'=' * 20 } END - {idx} {'=' * 20 }\"\"\"
+"""
+        for i in range(max_idx + 1):
+            if i in collection:
+                flow_request_body += gen_flow_request_body(i, collection[i]['name']) 
+            
+    except Exception as e:
+            print(f"{ANSI.RED}[!]{ANSI.RESET} Error when processing file: {e}")    
+
+
+    content = f"""
+def flow():
+    {flow_request_body}
+""" 
+    try:
+        with open('output_program.py', 'w') as file:
+            file.write(content)
+    except Exception as e:
+        print(f"{ANSI.RED}ERROR 3{ANSI.RESET}: error when write file: {e}")    
 def gen_proj(name_proj, input_json):
     """Generate the request proj."""
     try:
@@ -75,13 +125,8 @@ def gen_proj(name_proj, input_json):
         shutil.copyfile(input_json, f"{name_proj}/collections/{input_json}")
     except Exception as e:
         print(f"{ANSI.RED}[!]{ANSI.RESET} Error: {e}")
-
     # step 2 create class file
     try:
-        tmp = {
-    'http://': 'http://127.0.0.1:8081',
-    'https://': 'http://127.0.0.1:8081'
-}    
         class_concept = """
 import httpx
 from config import PROXIES_HTTPX, TIMEOUT_REQ
@@ -98,8 +143,12 @@ class Request:
         return self.__str__()
     def setHeader(self, key, value):
         self.headers[key] = value
+    def setBodyMaster(self, value):
+        self.body = value
     def setBody(self, key, value):
         self.body[key] = value
+    def setUrl(self, value):
+        self.url = value
     def getHeader(self, key):
         return self.headers.get(key, None)
     def getBody(self, key):
@@ -129,7 +178,7 @@ class Request:
         else:
             return self.client.get(self.url, headers=self.headers)
     def sendjson(self):
-        self.client = httpx.Client(proxies=PROXIES_HTTPX, verify=False, timeout=100)
+        self.client = httpx.Client(proxies=PROXIES_HTTPX, verify=False, timeout=TIMEOUT_REQ)
         if self.method == 'GET':
             return self.client.get(self.url, headers=self.headers)
         elif self.method == 'POST':
@@ -144,12 +193,13 @@ class Request:
         self.client.close()
 """
         config_concept = f"""
-PROXIES_HTTPX = {
-    tmp
-}
+PROXIES_HTTPX = {{
+    'http://': 'http://127.0.0.1:8081',
+    'https://': 'http://127.0.0.1:8081'
+}} 
 JSON_NAME = 'collections/{input_json}'
 
-TIMEOUT_REQ = 10
+TIMEOUT_REQ = None
 """ 
         flow_request_body = """
 """
@@ -194,14 +244,23 @@ TIMEOUT_REQ = 10
 import json
 from request_class import Request
 from config import JSON_NAME
+import os
 
-with open(JSON_NAME, 'r') as file_json:
+fp  = os.path.join(os.path.dirname(__file__), JSON_NAME)
+with open(fp, 'r') as file_json:
     config = json.load(file_json)
+
 def print_color(name, data):
     print(f"\\033[32m[+]\\033[0m \\033[31m{{name}}\\033[0m: {{data}}")
+
 def flow_request(collection):
+    for idx in collection:
+        # co = collection[idx]
+        # co['req'].removeHeader('Content-Length')
+        pass
     {flow_request_body}
-if __name__ == '__main__':
+
+def runFlow():
     collection = {{
     }}
     for key, _ in config.items():
@@ -211,8 +270,9 @@ if __name__ == '__main__':
             'name': key,
             'req': req
         }}
-    
     flow_request(collection)    
+if __name__ == '__main__':
+    runFlow()
 """
 
         
